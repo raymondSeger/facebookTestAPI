@@ -1,0 +1,88 @@
+<body>
+
+<h1>test Facebook</h1>
+
+<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+</fb:login-button>
+
+<button id="a">sadas</button>
+
+<div id="status">
+</div>
+
+
+<?php wp_footer();?>
+<script>
+    jQuery(document).ready(function($) {
+
+        var me2wechat       = {};
+        window.me2wechat    = me2wechat;
+        me2wechat.fb_user_id = null;
+
+        // this got called when we call the facebook SDK
+        window.fbAsyncInit = function() {
+
+            FB.init({
+                appId      : '962824730468974',
+                xfbml      : true,
+                version    : 'v2.4',
+                cookie     : true,
+                xfbml      : true
+            });
+
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+
+        };
+
+        $('#a').click(function(){
+            FB.api('/me?fields=birthday,email,first_name,gender,last_name,timezone,devices,name,picture', function(response) {
+                console.log(response);
+            });
+        });
+
+
+
+
+        // call the facebook SDk
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        // callback for the button and used the first time the app launched
+        function statusChangeCallback(response) {
+            console.log(response);
+            if (response.status === 'connected') {
+                // Logged into your app
+                console.log('Welcome!  Fetching your information.... ');
+                FB.api('/me', function(response) {
+                    $('#status').html('Thanks for logging in, ' + response.name);
+                    console.log(response);
+                    me2wechat.fb_user_id = response.id;
+                });
+
+            } else if (response.status === 'not_authorized') {
+                $('#status').html('Please log into this app.'); // logged into Facebook, but not your app.
+            } else {
+                $('#status').html('Please log into Facebook.'); // not logged into Facebook
+            }
+        }
+
+
+        // This function is called when someone finishes with the Login
+        // Button.  See the onlogin handler attached to it in the sample
+        // code below.
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+        }
+
+    });
+</script>
+</body>
